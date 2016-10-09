@@ -4,13 +4,10 @@
 
 [Version]
 Signature   = "$Windows NT$"
-; TODO - Change the Class and ClassGuid to match the Load Order Group value, see http://msdn.microsoft.com/en-us/windows/hardware/gg462963
-; Class       = "ActivityMonitor"                         ;This is determined by the work this filter driver does
-; ClassGuid   = {b86dff51-a31e-4bac-b3cf-e8cfe75c9fc2}    ;This value is determined by the Load Order Group value
-Class = "_TODO_Change_Class_appropriately_"
-ClassGuid = {_TODO_Change_ClassGuid_appropriately_}
-Provider    = %ManufacturerName%
-DriverVer   = 
+Class       = "ActivityMonitor"                         
+ClassGuid   = {b86dff51-a31e-4bac-b3cf-e8cfe75c9fc2}    
+Provider    = %Yoni%
+DriverVer   = 10/09/2016,1.0.0.0
 CatalogFile = FsFilterTestFileName.cat
 
 [DestinationDirs]
@@ -36,7 +33,7 @@ AddService          = %ServiceName%,,MiniFilter.Service
 DelFiles   = MiniFilter.DriverFiles
 
 [DefaultUninstall.Services]
-DelService = %ServiceName%,0x200      ;Ensure service is stopped before deleting
+DelService = FsFilterTestFileName,0x200      ;Ensure service is stopped before deleting
 
 ;
 ; Services Section
@@ -50,9 +47,8 @@ Dependencies     = "FltMgr"
 ServiceType      = 2                            ;SERVICE_FILE_SYSTEM_DRIVER
 StartType        = 3                            ;SERVICE_DEMAND_START
 ErrorControl     = 1                            ;SERVICE_ERROR_NORMAL
-; TODO - Change the Load Order Group value, see http://connect.microsoft.com/site221/content/content.aspx?ContentID=2512
-; LoadOrderGroup = "FSFilter Activity Monitor"
-LoadOrderGroup = "_TODO_Change_LoadOrderGroup_appropriately_"
+
+LoadOrderGroup = "FsFilter Encryption"
 AddReg           = MiniFilter.AddRegistry
 
 ;
@@ -85,7 +81,7 @@ FsFilterTestFileName.sys = 1,,
 
 [Strings]
 ; TODO - Add your manufacturer
-ManufacturerName        = "Template"
+Yoni                    = "KMSoft"
 ServiceDescription      = "FsFilterTestFileName Mini-Filter Driver"
 ServiceName             = "FsFilterTestFileName"
 DriverName              = "FsFilterTestFileName"
@@ -94,7 +90,5 @@ DiskId1                 = "FsFilterTestFileName Device Installation Disk"
 ;Instances specific information.
 DefaultInstance         = "FsFilterTestFileName Instance"
 Instance1.Name          = "FsFilterTestFileName Instance"
-; TODO - Change the altitude value, see http://connect.microsoft.com/site221/content/content.aspx?ContentID=2512
-;Instance1.Altitude      = "370030"
-Instance.Altitude       = "_TODO_Change_Altitude_appropriately_"
+Instance1.Altitude       = "141000"
 Instance1.Flags         = 0x0              ; Allow all attachments
