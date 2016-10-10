@@ -24,6 +24,8 @@ PFLT_FILTER gFilterHandle;
 ULONG_PTR OperationStatusCtx = 1;
 ULONG offset;
 
+PFILE_TYPE_PROCESS head;
+
 #define PTDBG_TRACE_ROUTINES            0x00000001
 #define PTDBG_TRACE_OPERATION_STATUS    0x00000002
 
@@ -392,11 +394,26 @@ Return Value:
 
 	PCHAR str = ".txt=notepad.exe,TxtReader.exe,;.jpg=ImageView.exe,explore.exe,;";
 
-	PFILE_TYPE_PROCESS head = GetStrategyFromString(str);
+	head = GetStrategyFromString(str);
 
 	OutputStrategy(head);
 
-	FreeStrategy(head);
+	UNICODE_STRING test = { 0 };
+	RtlInitUnicodeString(&test, L"Eula.txt");
+
+	DbgPrint("the test str is %s", (PCHAR)(test.Buffer));
+	DbgPrint("The test str is %wZ and len is %d", test,test.Length);
+
+	PFILE_TYPE_PROCESS out_info;
+	if (IsInStrategyList(head, &test, &out_info))
+	{
+		DbgPrint("valid type");
+	}
+	else
+	{
+		DbgPrint("Invalid file Type");
+	}
+	
 	
     return status;
 }
@@ -432,6 +449,8 @@ Return Value:
                   ("FsFilterTestFileName!FsFilterTestFileNameUnload: Entered\n") );
 
     FltUnregisterFilter( gFilterHandle );
+	
+	FreeStrategy(head);
 
     return STATUS_SUCCESS;
 }
@@ -531,6 +550,23 @@ PostCreate(_Inout_ PFLT_CALLBACK_DATA Data, _In_ PCFLT_RELATED_OBJECTS FltObject
 
 			DbgPrint("file name is %wZ", &(nameInfo->Name));
 
+			PFILE_TYPE_PROCESS out_info = NULL;
+
+			if (IsInStrategyList(head, &(nameInfo->Name), &out_info))
+			{
+				DbgPrint("Valid File Type");
+
+				if (out_info)
+				{
+					PPROCESS_INFO proc_info = out_info->processInfo;
+					while(proc_info)
+					{
+						DbgPrint("    %s", proc_info->procName);
+						proc_info = proc_info->next;
+					}
+				}
+			}
+			
 			
 		}
 	}

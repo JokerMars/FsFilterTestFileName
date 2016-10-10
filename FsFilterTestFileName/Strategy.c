@@ -122,3 +122,86 @@ VOID OutputStrategy(PFILE_TYPE_PROCESS head)
 }
 
 
+
+BOOLEAN IsInStrategyList(PFILE_TYPE_PROCESS head, PUNICODE_STRING fileName, PFILE_TYPE_PROCESS * out_info)
+{
+	if (head == NULL || fileName == NULL)
+	{
+		return FALSE;
+	}
+
+	UNICODE_STRING source;
+	RtlUpcaseUnicodeString(&source, fileName, TRUE);
+
+	UNICODE_STRING fileType;
+	WCHAR buff[FILE_TYPE_LEN] = { 0 };
+	fileType.Buffer = buff;
+	fileType.Length = 0;
+	fileType.MaximumLength = FILE_TYPE_LEN * 2;
+
+	ANSI_STRING tmp;
+
+	while (head)
+	{
+		RtlInitAnsiString(&tmp, head->fileType);
+		RtlAnsiStringToUnicodeString(&fileType, &tmp, FALSE);
+
+		DbgPrint(" %wZ", &fileType);
+		RtlUpcaseUnicodeString(&fileType, &fileType, FALSE);
+		INT pos = GetIndexFromSource(&source, &fileType);
+		DbgPrint("Position is %d", pos);
+
+		if (pos > 0)
+		{
+			DbgPrint("We Care this file: %wZ", fileName);
+			*out_info = head;
+			return TRUE;
+		}
+		
+		head = head->next;
+	}
+	
+	return FALSE;
+}
+
+
+INT GetIndexFromSource(PUNICODE_STRING source, PUNICODE_STRING value)
+{
+	if (source->Length < value->Length)
+	{
+		return -1;
+	}
+
+	INT i, j;
+	BOOLEAN flag;
+	INT source_len = source->Length / 2;
+	INT value_len = value->Length / 2;
+	INT len = source_len - value_len + 1;
+
+	DbgPrint("source is %wZ and value is %wZ", source, value);
+
+	for (i = 0; i < len; i++)
+	{
+		flag = TRUE;
+		for (j = 0; j < value_len; j++)
+		{
+			WCHAR a = source->Buffer[i + j];
+			WCHAR b = value->Buffer[j];
+
+			if (a != b)
+			{
+				flag = FALSE;
+				break;
+			}
+		}
+
+		if (flag)
+		{
+			return i;
+		}
+	}
+	return -1;
+}
+
+
+

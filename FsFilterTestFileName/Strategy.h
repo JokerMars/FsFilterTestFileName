@@ -27,7 +27,9 @@ VOID FreeStrategy(PFILE_TYPE_PROCESS head);
 
 VOID OutputStrategy(PFILE_TYPE_PROCESS head);
 
+BOOLEAN IsInStrategyList(PFILE_TYPE_PROCESS head, PUNICODE_STRING fileName, PFILE_TYPE_PROCESS *out_info);
 
+INT GetIndexFromSource(PUNICODE_STRING source, PUNICODE_STRING value);
 
 
 #endif
